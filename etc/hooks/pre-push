@@ -1,0 +1,39 @@
+#!/bin/sh
+
+./etc/ci/check-commit-msg.bash
+if [ $? != 0 ]; then
+  exit 1
+fi
+
+echo "\033[1;107;34mVulnerability check...\033[0m"
+# yarn audit:check
+
+if [ $? = 0 ]; then
+  echo "\033[1;32;107mValuabilities Check Passed\033[0m"
+else
+  echo "\033[41;97mValuabilities Check Failed\033[0m"
+  exit 1
+fi
+
+echo "\033[1;34;107mLint check...\033[0m"
+yarn lint
+
+if [ $? = 0 ]; then
+  echo "\033[1;32;107mLint Check Passed\033[0m"
+else
+  echo "\033[41;97mLint Check Failed\033[0m"
+  exit 1
+fi
+
+
+echo "\033[1;34;107mUnit test Check...\033[0m"
+yarn test:unit:cov
+
+if [ $? = 0 ]; then
+  echo "\033[1;32;107mUnit test Check Passed\033[0m"
+else
+  echo "\033[41;97mUnit test Check Failed\033[0m"
+  exit 1
+fi
+
+exit 0

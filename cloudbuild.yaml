@@ -1,0 +1,149 @@
+substitutions:
+  _SERVICE_NAME: lending-ts
+  _PROJECT_NAME: unfederalreserve
+  _PROD_DOMAIN: unfederalreserve.com
+  _DEV_DOMAIN: unfederalreservetesting.com
+  _NOTIFICATION_GROUP: lending
+options:
+  machineType: 'N1_HIGHCPU_8'
+steps:
+
+# check git commit message
+- name: 'gcr.io/cloud-builders/git'
+  id: git-check
+  waitFor: ['-']
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      set -e
+
+      export BRANCH_NAME=${BRANCH_NAME}
+
+      ./etc/ci/check-commit-msg.bash
+
+# init environment
+- name: 'gcr.io/$PROJECT_ID/yarn:27102021'
+  id: init
+  waitFor: ['git-check']
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      set -e
+      echo > .cloudbuild.env.sh
+      if [ "$BRANCH_NAME" = "master" ]; then
+        echo 'export CLUSTER_NAME=master' >> .cloudbuild.env.sh
+        echo 'export DOMAIN=$_PROD_DOMAIN' >> .cloudbuild.env.sh
+      fi
+      if [ "$BRANCH_NAME" = "stage" ]; then
+        echo 'export CLUSTER_NAME=stage' >> .cloudbuild.env.sh
+        echo 'export URL_ENV_PART=-stage' >> .cloudbuild.env.sh
+        echo 'export DOMAIN=$_DEV_DOMAIN' >> .cloudbuild.env.sh
+      fi
+      if [ "$BRANCH_NAME" = "dev" ]; then
+        echo 'export CLUSTER_NAME=dev' >> .cloudbuild.env.sh
+        echo 'export URL_ENV_PART=-dev' >> .cloudbuild.env.sh
+        echo 'export DOMAIN=$_DEV_DOMAIN' >> .cloudbuild.env.sh
+      fi
+
+      ./make.sh install
+
+- name: 'gcr.io/$PROJECT_ID/yarn:27102021'
+  id: build
+  waitFor:
+    - init
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      set -e
+      . ./.cloudbuild.env.sh
+      SHORT_SHA=$SHORT_SHA BRANCH_NAME=$BRANCH_NAME yarn build --mode $BRANCH_NAME
+
+# build docker image
+# - name: 'gcr.io/kaniko-project/executor'
+#   id: build-docker
+#   waitFor: ['init']
+#   entrypoint: '/bin/sh'
+#   args:
+#   args:
+#     - '-c'
+#     - |
+#       set -e
+#       if [ "$$CLUSTER_NAME" != "dev" ]; then
+#         echo "Not building on branch $BRANCH_NAME"
+#         exit;
+#       fi
+#       /kaniko/executor --destination=gcr.io/$PROJECT_ID/$_SERVICE_NAME:latest --destination=gcr.io/$PROJECT_ID/$_SERVICE_NAME:$COMMIT_SHA --cache=true
+
+- name: 'gcr.io/$PROJECT_ID/yarn:27102021'
+  id: lint
+  waitFor:
+    - build
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      set -e
+      . ./.cloudbuild.env.sh
+      # yarn audit:check
+      yarn lint
+
+- name: 'gcr.io/$PROJECT_ID/yarn:27102021'
+  id: test
+  waitFor:
+    - build
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      set -e
+      . ./.cloudbuild.env.sh
+      yarn test:unit:ci --passWithNoTests
+
+# build docker image
+- name: 'gcr.io/cloud-builders/gsutil'
+  id: deploy
+  waitFor:
+    - build
+    - lint
+    - test
+  entrypoint: 'sh'
+  args:
+    - '-c'
+    - |
+      set -e
+      . ./.cloudbuild.env.sh
+
+      if [ "$$CLUSTER_NAME" = "" ]; then
+        echo "Not building on branch $BRANCH_NAME"
+        exit;
+      fi
+
+      cd dist
+
+      gsutil -m -h "Cache-Control:public,max-age=1209600" cp -z html,js,css,svg -R * gs://$_PROJECT_NAME-$$CLUSTER_NAME-$_SERVICE_NAME
+      gsutil setmeta -h "Cache-Control:private, max-age=0, no-transform" gs://$_PROJECT_NAME-$$CLUSTER_NAME-$_SERVICE_NAME/index.html
+
+      gcloud compute url-maps invalidate-cdn-cache apps-https-lb --async --path "/index.html" --host="app$$URL_ENV_PART.$$DOMAIN"
+      gcloud compute url-maps invalidate-cdn-cache apps-https-lb --async --path "/*" --host="app$$URL_ENV_PART.$$DOMAIN"
+
+# trigger e2e tests
+# - name: 'gcr.io/cloud-builders/gcloud'
+#   id: trigger-e2e
+#   waitFor:
+#     - deploy
+#   entrypoint: 'bash'
+#   args:
+#     - '-c'
+#     - |
+#       set -e
+
+#       . ./.cloudbuild.env.sh
+#       if [ "$$CLUSTER_NAME" = "" ]; then
+#         echo "Not running e2e on branch $BRANCH_NAME"
+#         exit;
+#       fi
+
+#       yes | gcloud beta builds triggers run lending-e2e  --branch=${BRANCH_NAME}

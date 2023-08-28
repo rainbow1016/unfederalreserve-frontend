@@ -1,0 +1,130 @@
+// colors ######################################################################
+// #############################################################################
+
+$un-color-backdrop: rgba(0, 0, 0, 0.5);
+$un-color-white: #fff;
+$un-color-card: rgba(0, 11, 50, 0.2);
+$un-color-text-black: #2c2c2c;
+$un-color-soft-gray: #798dca;
+$un-color-green: #00ffc2;
+$un-color-red: #ff5252;
+
+$un-color-body: #515d69;
+$un-color-limed-spruce: #3d4751;
+$un-color-green-vogue: #042751;
+$un-color-tundora: #424242;
+$un-color-secondary: #2e74ff;
+$un-color-primary: #2c2c2c;
+$un-color-mine-shaft: #3b3b3b;
+$un-color-sirocco: #797a7a;
+$un-color-biscay: #1e3068;
+$un-color-alabaster: #f7f7f7;
+$un-color-white: #fff;
+$un-color-white-hover: #020202;
+$un-color-disabled: #fff3f3;
+$un-color-yellow: #fdd553;
+$un-color-yellow-light: #fff082;
+$un-color-yellow-link: #fdf8e6;
+$un-color-sapphire: #060d5d;
+$un-color-midnight-express: #011044;
+$un-color-light-sea-green: #24c0b3;
+$un-color-royal-blue: #407bff;
+$un-color-cerulean-blue: #3664c2;
+$un-color-havelock-blue: #6882d4;
+$un-color-free-speach-blue: #4d68ba;
+$un-color-tory-blue: #28418e;
+$un-color-tory-blue-1: #2c4597;
+$un-color-dark-turquoise: #01d8dc;
+$un-color-dark-blue: #08143e;
+$un-color-solitude: #e4e8ee;
+$un-color-caribbean-green: #00d395;
+$un-color-tahiti-gold: #e4761b;
+$un-color-water-leaf: #a9ffe6;
+
+$un-color-gray: gainsboro;
+$un-color-grey-0: #f0f3f9;
+$un-color-gray-1: #9fb1e8;
+$un-color-gray-3: #a8b6c7;
+$un-color-gray-4: #2d3954;
+
+$un-color-blue-1: #3f63d4;
+$un-color-blue-2: #314ca2;
+$un-color-blue-3: #3854ab;
+$un-color-blue-4: #739efa;
+$un-color-blue-5: $un-color-soft-gray;
+$un-color-blue-6: #415aad;
+$un-color-blue-7: #29418f;
+$un-color-blue-8: #4065d8;
+$un-color-blue-9: #d2e5ff;
+$un-color-blue-10: #f0f8ff;
+$un-color-blue-11: #102461;
+$un-color-blue-12: #1a327c;
+$un-color-blue-13: #274191;
+
+$un-color-orange-1: #da914e;
+
+$un-color-normal: #37f;
+$un-color-warning: #fad61d;
+$un-color-warning-notification: #ff5252;
+$un-color-danger: #ff6f1e;
+$un-color-critical: #ff5252;
+
+$un-color-dodger-blue: #33b6ff;
+$un-color-accent: #00c9d4;
+$un-color-accent-2: #01d7dc;
+$un-color-accent-3: #01cad5;
+$un-color-switch-bg: #3f58a8;
+$un-color-switch-disabled: #5269b4;
+
+$un-color-pink-dark: #1b1a56;
+$un-color-pink-light: #704a87;
+$un-color-pink-card: rgba(56, 21, 62, 0.45);
+$un-color-pink-gradient: linear-gradient(270deg, rgba(255, 82, 82, 0.12) 0%, rgba(255, 82, 82, 0.06) 100%);
+
+// breakpoints #################################################################
+// #############################################################################
+
+$un-breakpoints: (
+  mobile: 320px,
+  mobile-xs: 374px,
+  tablet-xs: 575px,
+  tablet: 768px,
+  desktop: 980px,
+  desktop-md: 1024px,
+  desktop-lg: 1199px,
+  wide: 1366px
+);
+
+// typography ##################################################################
+// #############################################################################
+
+$un-typography-main: "Poppins";
+$un-typography-font-family: $un-typography-main, arial, helvetica, sans-serif;
+$un-typography-font-size: 16px;
+$un-typography-font-line-height: 1.25;
+$un-typography-color-text: $un-color-primary;
+
+// z-index layers ##############################################################
+// #############################################################################
+
+$un-z-index-tooltip: 12000;
+$un-z-index-modal: 10000 + 1000;
+$un-z-index-notification: $un-z-index-modal + 1000;
+$un-z-index-loader-global: $un-z-index-notification + 1000;
+
+// utils #######################################################################
+// #############################################################################
+
+$un-transition-duration: 0.5s !default;
+$un-transition: $un-transition-duration ease !default;
+
+$un-transition-duration-fast: 0.25s !default;
+$un-transition-fast: $un-transition-duration-fast ease !default;
+
+$un-radius: 4px !default;
+
+$un-box-shadow: 0 2px 14px 0 rgba(0, 0, 0, 0.2);
+
+$un-header-height: 51px; // 110px;
+$un-footer-height: 110px;
+$un-unset-value: unset;

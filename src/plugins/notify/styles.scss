@@ -1,0 +1,8 @@
+
+.vue-notification {
+  font-family: $un-typography-font-family;
+
+  &-group {
+    z-index: $un-z-index-notification !important;
+  }
+}

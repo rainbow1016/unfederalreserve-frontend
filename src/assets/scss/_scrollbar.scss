@@ -1,0 +1,13 @@
+.un-hide-scrollbar-but-scrolling {
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: auto;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &::-webkit-scrollbar-track {
+    display: none;
+  }
+}

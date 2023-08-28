@@ -1,0 +1,21 @@
+// stylelint-disable selector-max-type
+
+// variables ###################################################################
+// #############################################################################
+
+$un-typography-font-family: arial, sans-serif !default;
+$un-typography-font-size: 16px !default;
+$un-typography-font-line-height: 1.25 !default;
+$un-typography-font-color: $un-typography-color-text !default;
+
+// main ########################################################################
+// #############################################################################
+
+body {
+  font-family: $un-typography-font-family;
+  font-size: $un-typography-font-size;
+  line-height: $un-typography-font-line-height;
+  color: $un-typography-font-color;
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}

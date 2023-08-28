@@ -1,0 +1,9 @@
+{
+  "name": "ReserveLending",
+  "description": "An asset-liability DeFi lending tool",
+  "iconPath": "logo.svg",
+  "providedBy": {
+    "name": "unFederalReserve",
+    "url": "https://unfederalreserve.com"
+  }
+}

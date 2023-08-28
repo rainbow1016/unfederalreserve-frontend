@@ -1,0 +1,29 @@
+#!/bin/sh
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+BANCH_REGEX="^.*((ci|doc|feat|fix|perf|refactor|style|test)[//][0-9]+).*$"
+LINK_TO_ISSUES="https://github.com/UnFederalReserve/development/issues"
+
+if [[ -z "$COMMIT_SOURCE" ]]
+then
+  ref=$(git rev-parse --abbrev-ref HEAD)
+  if [[ $ref =~ $BANCH_REGEX ]]
+  then
+    hint=$(cat "$COMMIT_MSG_FILE")
+    type_ticket="${BASH_REMATCH[1]}"
+    echo "${type_ticket} <subject>" > "$COMMIT_MSG_FILE"
+
+    IFS='/'
+    read -a type_ticket_pair <<< "$type_ticket"
+
+    ticket_number=${type_ticket_pair[1]}
+
+    echo >> "$COMMIT_MSG_FILE"
+    echo "${LINK_TO_ISSUES}/${ticket_number}" >> "$COMMIT_MSG_FILE"
+
+    echo "$hint" >> "$COMMIT_MSG_FILE"
+  fi
+fi
